@@ -1,232 +1,230 @@
 <?php
-	class Vanillacoin {
-		protected $rpc_host;
-		protected $rpc_port;
-		protected $rpc_user;
-		protected $rpc_pass;
+    class Vanillacoin {
+        protected $rpc_host;
+        protected $rpc_port;
+        protected $rpc_user;
+        protected $rpc_pass;
 
-		public function __construct($rpc_host, $rpc_port) {
-			$this->rpc_host = $rpc_host;
-			$this->rpc_port = $rpc_port;
-			$this->rpc_user = 'user';
-			$this->rpc_pass = '';
-			$this->id = 1;
-		}
+        public function __construct($rpc_host = '127.0.0.1', $rpc_port = '9195', $rpc_user = 'user', $rpc_pass = '') {
+            $this->rpc_host = $rpc_host;
+            $this->rpc_port = $rpc_port;
+            $this->rpc_user = $rpc_user;
+            $this->rpc_pass = $rpc_port;
+        }
+    
+        private function query($id, $method, $params = array('')) {
+            $params = array_values($params);
+            
+            $request = json_encode(array(
+                            'method' => strtolower($method),
+                            'params' => $params,
+                            'id' => $id
+                            ));
 
-		private function query($method,$params = array('')) {
-			$params = array_values($params);
-			
-			$request = json_encode(array(
-							'method' => strtolower($method),
-							'params' => $params,
-							'id' => $this->id
-							));
+            $curl = curl_init();     
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);  
+            curl_setopt($curl, CURLOPT_HTTPHEADER, Array("Content-type: application/json"));
+            curl_setopt($curl, CURLOPT_URL, $this->rpc_host.":".$this->rpc_port);  
+            curl_setopt($curl, CURLOPT_USERPWD, $this->rpc_user.":".$this->rpc_pass);
+            curl_setopt($curl, CURLOPT_POST, TRUE);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $request);
+            $response_json = curl_exec($curl);
+            curl_close($curl);
 
-			$curl = curl_init();     
-			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);  
-			curl_setopt($curl, CURLOPT_HTTPHEADER, Array("Content-type: application/json"));
-			curl_setopt($curl, CURLOPT_URL, $this->rpc_host.":".$this->rpc_port);  
-			curl_setopt($curl, CURLOPT_USERPWD, $this->rpc_user.":".$this->rpc_pass);
-			curl_setopt($curl, CURLOPT_POST, TRUE);
-			curl_setopt($curl, CURLOPT_POSTFIELDS, $request);
-			$response_json = curl_exec($curl);
-			curl_close($curl);
+            if (!$response_json) {
+                throw new Exception('Unable to connect to '.$this->rpc_host, 0);
+            }
+            $response = json_decode($response_json,true);
 
-			if (!$response_json) {
-				throw new Exception('Unable to connect to '.$this->rpc_host, 0);
-			}
-			$response = json_decode($response_json,true);
-
-			if ($response['id'] != $this->id) {
-				throw new Exception('Incorrect response id (request id: '.$this->id.', response id: '.$response['id'].')',1);
-			}
-			if (!empty($response['error'])) {
-				throw new Exception('Request error: '.print_r($response['error'],1),2);
-			}
-			$this->id++;
-			
-			return $response_json;
-		}
+            if ($response['id'] != $id) {
+                throw new Exception('Incorrect response id (request id: '.$id.', response id: '.$response['id'].')',1);
+            }
+            if (!empty($response['error'])) {
+                throw new Exception('Request error: '.print_r($response['error'],1),2);
+            }
+            
+            return $response_json;
+        }
 
 
-		// backupwallet
-		public function backupwallet() {
-			return $this->query('backupwallet', array());
-		}
+        // backupwallet
+        public function backupwallet($id = 1) {
+            return $this->query($id, 'backupwallet', array());
+        }
 
-		// checkwallet
-		public function checkwallet() {
-			return $this->query('checkwallet', array());
-		}
+        // checkwallet
+        public function checkwallet($id = 1) {
+            return $this->query($id, 'checkwallet', array());
+        }
 
-		// databasefind
-		public function databasefind($dbFind) {
-			return $this->query('databasefind', array($dbFind));
-		}
+        // databasefind
+        public function databasefind($dbFind, $id = 1) {
+            return $this->query($id, 'databasefind', array($dbFind));
+        }
 
-		// databasestore
-		public function databasestore($dbStore) {
-			return $this->query('databasestore', array($dbStore));
-		}
+        // databasestore
+        public function databasestore($dbStore, $id = 1) {
+            return $this->query($id, 'databasestore', array($dbStore));
+        }
 
-		// dumpprivkey
-		public function dumpprivkey($address) {
-			return $this->query('dumpprivkey', array($address));
-		}
+        // dumpprivkey
+        public function dumpprivkey($address, $id = 1) {
+            return $this->query($id, 'dumpprivkey', array($address));
+        }
 
-		// encryptwallet
-		public function encryptwallet($password) {
-			return $this->query('encryptwallet', array($password));
-		}
+        // encryptwallet
+        public function encryptwallet($password, $id = 1) {
+            return $this->query($id, 'encryptwallet', array($password));
+        }
 
-		// getaccount
-		public function getaccount($address) {
-			return $this->query('getaccount', array($address));
-		}
+        // getaccount
+        public function getaccount($address, $id = 1) {
+            return $this->query($id, 'getaccount', array($address));
+        }
 
-		// getaccountaddress
-		public function getaccountaddress($account) {
-			return $this->query('getaccountaddress', array($account));
-		}
+        // getaccountaddress
+        public function getaccountaddress($account, $id = 1) {
+            return $this->query($id, 'getaccountaddress', array($account));
+        }
 
-		// getbalance
-		public function getbalance() {
-			return $this->query('getbalance', array());
-		}
+        // getbalance
+        public function getbalance($id = 1) {
+            return $this->query($id, 'getbalance', array());
+        }
 
-		// getblock
-		public function getblock($hash) {
-			return $this->query('getblock', array($hash));
-		}
+        // getblock
+        public function getblock($hash, $id = 1) {
+            return $this->query($id, 'getblock', array($hash));
+        }
 
-		// getblockcount
-		public function getblockcount() {
-			return $this->query('getblockcount', array());
-		}
+        // getblockcount
+        public function getblockcount($id = 1) {
+            return $this->query($id, 'getblockcount', array());
+        }
 
-		// getblockhash
-		public function getblockhash($height) {
-			return $this->query('getblockhash', array($height));
-		}
-		
-		// getblocktemplate
-		public function getblocktemplate() {
-			return $this->query('getblocktemplate', array());
-		}
+        // getblockhash
+        public function getblockhash($height, $id = 1) {
+            return $this->query($id, 'getblockhash', array($height));
+        }
+        
+        // getblocktemplate
+        public function getblocktemplate($id = 1) {
+            return $this->query($id, 'getblocktemplate', array());
+        }
 
-		// getdifficulty
-		public function getdifficulty() {
-			return $this->query('getdifficulty', array());
-		}
+        // getdifficulty
+        public function getdifficulty($id = 1) {
+            return $this->query($id, 'getdifficulty', array());
+        }
 
-		// getincentiveinfo
-		public function getincentiveinfo() {
-			return $this->query('getincentiveinfo', array());
-		}
+        // getincentiveinfo
+        public function getincentiveinfo($id = 1) {
+            return $this->query($id, 'getincentiveinfo', array());
+        }
 
-		// getinfo
-		public function getinfo() {
-			return $this->query('getinfo', array());
-		}
+        // getinfo
+        public function getinfo($id = 1) {
+            return $this->query($id, 'getinfo', array());
+        }
 
-		// getmininginfo
-		public function getmininginfo() {
-			return $this->query('getmininginfo', array());
-		}
+        // getmininginfo
+        public function getmininginfo($id = 1) {
+            return $this->query($id, 'getmininginfo', array());
+        }
 
-		// getnetworkhashps
-		public function getnetworkhashps() {
-			return $this->query('getnetworkhashps', array());
-		}
+        // getnetworkhashps
+        public function getnetworkhashps($id = 1) {
+            return $this->query($id, 'getnetworkhashps', array());
+        }
 
-		// getnewaddress
-		public function getnewaddress() {
-			return $this->query('getnewaddress', array($account));
-		}
+        // getnewaddress
+        public function getnewaddress($id = 1) {
+            return $this->query($id, 'getnewaddress', array($account));
+        }
 
-		// getpeerinfo
-		public function getpeerinfo() {
-			return $this->query('getpeerinfo', array());
-		}
+        // getpeerinfo
+        public function getpeerinfo($id = 1) {
+            return $this->query($id, 'getpeerinfo', array());
+        }
 
-		// getrawtransaction
-		public function getrawtransaction ($txid) {
-			return $this->query('getrawtransaction', array($txid));
-		}
+        // getrawtransaction
+        public function getrawtransaction ($txid, $id = 1) {
+            return $this->query($id, 'getrawtransaction', array($txid));
+        }
 
-		// gettransaction
-		public function gettransaction ($txid) {
-			return $this->query('gettransaction', array($txid));
-		}
+        // gettransaction
+        public function gettransaction ($txid, $id = 1) {
+            return $this->query($id, 'gettransaction', array($txid));
+        }
 
-		// importprivkey
-		public function importprivkey($privkey) {
-			return $this->query('importprivkey', array($privkey));
-		}
-		
-		// listreceivedbyaccount
-		public function listreceivedbyaccount($minconf, $empty) {
-			return $this->query('listreceivedbyaccount', array($minconf, $empty));
-		}
+        // importprivkey
+        public function importprivkey($privkey, $id = 1) {
+            return $this->query($id, 'importprivkey', array($privkey));
+        }
+        
+        // listreceivedbyaccount
+        public function listreceivedbyaccount($minconf, $empty, $id = 1) {
+            return $this->query($id, 'listreceivedbyaccount', array($minconf, $empty));
+        }
 
-		// listreceivedbyaddress
-		public function listreceivedbyaddress($minconf, $empty) {
-			return $this->query('listreceivedbyaddress', array($minconf, $empty));
-		}
+        // listreceivedbyaddress
+        public function listreceivedbyaddress($minconf, $empty, $id = 1) {
+            return $this->query($id, 'listreceivedbyaddress', array($minconf, $empty));
+        }
 
-		// listsinceblock
-		public function listsinceblock($hash) {
-			return $this->query('listsinceblock', array($hash));
-		}
+        // listsinceblock
+        public function listsinceblock($hash, $id = 1) {
+            return $this->query($id, 'listsinceblock', array($hash));
+        }
 
-		// listtransactions
-		public function listtransactions() {
-			return $this->query('listtransactions', array());
-		}
+        // listtransactions
+        public function listtransactions($id = 1) {
+            return $this->query($id, 'listtransactions', array());
+        }
 
-		// repairwallet
-		public function repairwallet() {
-			return $this->query('repairwallet', array());
-		}
+        // repairwallet
+        public function repairwallet($id = 1) {
+            return $this->query($id, 'repairwallet', array());
+        }
 
-		// sendmany
-		public function sendmany($to, $account = '') {
-			return $this->query('sendmany', array($account, $to));
-		}
+        // sendmany
+        public function sendmany($to, $account = '', $id = 1) {
+            return $this->query($id, 'sendmany', array($account, $to));
+        }
 
-		// sendtoaddress
-		public function sendtoaddress($address, $amount) {
-			return $this->query('sendtoaddress', array($address, $amount));
-		}
+        // sendtoaddress
+        public function sendtoaddress($address, $amount, $id = 1) {
+            return $this->query($id, 'sendtoaddress', array($address, $amount));
+        }
 
-		// settxfee
-		public function settxfee($txfee) {
-			return $this->query('settxfee', array($txfee));
-		}
+        // settxfee
+        public function settxfee($txfee, $id = 1) {
+            return $this->query($id, 'settxfee', array($txfee));
+        }
 
-		// submitblock
-		public function submitblock($block) {
-			return $this->query('submitblock', array($block));
-		}
+        // submitblock
+        public function submitblock($block, $id = 1) {
+            return $this->query($id, 'submitblock', array($block));
+        }
 
-		// validateaddress
-		public function validateaddress($address) {
-			return $this->query('validateaddress', array($address));
-		}
+        // validateaddress
+        public function validateaddress($address, $id = 1) {
+            return $this->query($id, 'validateaddress', array($address));
+        }
 
-		// walletlock
-		public function walletlock() {
-			return $this->query('walletlock', array());
-		}
+        // walletlock
+        public function walletlock($id = 1) {
+            return $this->query($id, 'walletlock', array());
+        }
 
-		// walletpassphrase
-		public function walletpassphrase($password) {
-			return $this->query('walletpassphrase', array($password));
-		}
+        // walletpassphrase
+        public function walletpassphrase($password, $id = 1) {
+            return $this->query($id, 'walletpassphrase', array($password));
+        }
 
-		// walletpassphrasechange
-		public function walletpassphrasechange($password, $newpassword) {
-			return $this->query('walletpassphrasechange', array($password, $newpassword));
-		}
-	}
+        // walletpassphrasechange
+        public function walletpassphrasechange($password, $newpassword, $id = 1) {
+            return $this->query($id, 'walletpassphrasechange', array($password, $newpassword));
+        }
+    }
 ?>
