@@ -9,7 +9,7 @@
             $this->rpc_host = $rpc_host;
             $this->rpc_port = $rpc_port;
             $this->rpc_user = $rpc_user;
-            $this->rpc_pass = $rpc_port;
+            $this->rpc_pass = $rpc_pass;
         }
     
         private function query($id, $method, $params = array('')) {
