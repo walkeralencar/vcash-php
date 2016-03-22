@@ -1,6 +1,9 @@
 # Vcash Rpc Client for PHP
 
 ## how to use
+1. Clone the project from github.
+2. Run ``` $ composer install ```
+3. Create your own file to consume, follow a sample.
 ```php
 <?php
 require_once('./vendor/autoload.php');
@@ -23,7 +26,8 @@ catch (Exception $e) {
 }
 ?>
 ```
+
 ## Donations
-v.cash.: VoPf5tfZRwvypdT5eLjzmcrUL7fpE36i1U
-Decred.: DsTipY2uLUWWHy8joQkhGRxnNygow9PZw5b
-Bitcoin: 1FFvqvprQ1e6YBNoZHfDZvV3Qibph9s2dK
+* Vcash.: VoPf5tfZRwvypdT5eLjzmcrUL7fpE36i1U
+* Decred.: DsTipY2uLUWWHy8joQkhGRxnNygow9PZw5b
+* Bitcoin: 1FFvqvprQ1e6YBNoZHfDZvV3Qibph9s2dK
