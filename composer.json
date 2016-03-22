@@ -1,0 +1,22 @@
+{
+    "name": "vcash/rpc",
+    "description": "v.cash rpc client",
+    "type": "library",
+    "license": "LGPL 3.0",
+    "authors": [
+        {
+            "name": "Walker de Alencar",
+            "email": "walkeralencar@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "Vcash\\": ["src/", "tests/"]
+        }
+    },
+    "require": {
+        "php": ">=5.5.9",
+        "ext-curl": "*"
+    }
+}
