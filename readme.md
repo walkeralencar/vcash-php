@@ -28,6 +28,6 @@ catch (Exception $e) {
 ```
 
 ## Donations
-* Vcash.: VoPf5tfZRwvypdT5eLjzmcrUL7fpE36i1U
+* Vcash.: VoocuUCPkz6GnPkimoEjYabvKNSorUJi8m
 * Decred.: DsTipY2uLUWWHy8joQkhGRxnNygow9PZw5b
 * Bitcoin: 1FFvqvprQ1e6YBNoZHfDZvV3Qibph9s2dK
